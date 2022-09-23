@@ -17,22 +17,32 @@ function Home() {
       const ws = wb.Sheets[wsname];
       const data = XLSX.utils.sheet_to_csv(ws, { header: 1 });
       console.log("This data is: "+data);
+      const button= document.getElementById("loadButton");
+      button.removeAttribute("hidden");
     };
+
     reader.readAsBinaryString(file);
   };
+
+  function hideBlock(){
+    const container = document.getElementsByClassName("home")[0];
+    container.style.display="none";
+  }
+  
+  
   return (
     <div className="home">
-      <div class="container">
-        <div class="row align-items-center my-5">
-          <div class="col-lg-7">
+      <div className="container">
+        <div className="row align-items-center my-5">
+          <div className="col-lg-7">
             <img
-              class="img-fluid rounded mb-4 mb-lg-0"
+              className="img-fluid rounded mb-4 mb-lg-0"
               src="http://placehold.it/900x400"
               alt=""
             />
           </div>
-          <div class="col-lg-5">
-            <h1 class="font-weight-light">Home page</h1>
+          <div className="col-lg-5">
+            <h1 className="font-weight-light">Home page</h1>
             <p>
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
@@ -45,6 +55,7 @@ function Home() {
               value={selectedFile}
               onChange={onChange}
             />
+            <button onClick={hideBlock } id="loadButton" hidden>Edit this file</button>
           </div>
         </div>
       </div>
