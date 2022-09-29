@@ -24,8 +24,9 @@ function Home() {
       const ws2 = wb2.Sheets[wsname2];
       console.log(ws2);
       data2 = XLSX.utils.sheet_to_json(ws2, { range: 8, raw: true, defval: "" });
-      console.log("This data is: " + JSON.stringify(data2));
+      //console.log("This data is: " + JSON.stringify(data2));
       const button = document.getElementById("loadButton");
+      console.log(data2.length);
       button.removeAttribute("hidden");
       //Solución libreria ExcelJS para coger el data validation
       //const wb0 = new ExcelJS.Workbook();
@@ -81,14 +82,16 @@ function Home() {
     if(index>0){
       index--;
       displayQuestion();
+      console.log(index);
     }
     
   }
 
   function nextQuestion(){
-    if(index++  < data2.length){
+    if(index+1 < (data2.length)){
       index++;
       displayQuestion();
+      console.log(index);
     }    
   }
 
