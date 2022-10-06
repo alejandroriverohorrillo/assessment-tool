@@ -81,6 +81,11 @@ function Home() {
     var questionCategory = document.getElementById("questionCategory");
     var questionQuestion = document.getElementById("questionQuestion");
     var questionRecommendation = document.getElementById("questionRecommendations");
+    var acg = document.getElementById("selectNumber");
+    var box = document.getElementById("open_q");
+    var select = document.getElementById("selectNumber");
+    var hgb = document.getElementById("questionsContainer");
+    hgb.removeAttribute("hidden");
     /*var questionContainer = document.getElementById("questionBox");
     if (data2) {
       actualQuestion = function () {
@@ -95,12 +100,34 @@ function Home() {
     questionCategory.innerHTML = data2[index]["Category"];
     questionQuestion.innerHTML = data2[index]["Question"];
     questionRecommendation.innerHTML = data2[index]["Recommendation"];
+    //questionAnswer.innerHTML=data2[index]["Answers"];
+    var answer_options=String(data2[index]["Options"]);
+    
+    if(answer_options.length>2){
+
+      box.style.display='none';
+      acg.innerHTML="";
+      var options=answer_options.split("; ");
+      var select = document.getElementById("selectNumber");
+      select.style.display='block';
+      for(var i = 0; i < options.length; i++) {
+          var opt = options[i];
+          var el = document.createElement("option");
+          el.textContent = opt;
+          el.value = opt;
+          select.appendChild(el);
+      }
+    }
+    else{
+      select.style.display='none';
+      box.style.display='block';
+      
+    }
   }
   function prevQuestion() {
     if (index > 0) {
       index--;
       displayQuestion();
-      console.log(index);
     }
 
   }
@@ -109,7 +136,6 @@ function Home() {
     if (index + 1 < (data2.length)) {
       index++;
       displayQuestion();
-      console.log(index);
     }
   }
 
@@ -142,11 +168,17 @@ function Home() {
           </div>
         </div>
       </div>
-      <div id="questionsContainer">
+      <div id="questionsContainer" hidden>
         <button onClick={prevQuestion} id="prevQButton">Previous Question</button>
         <button onClick={nextQuestion} id="nextQButton">Next Question</button>
         <div id="questionCategory"></div>
         <div id="questionQuestion"></div>
+        <div id="Answer">
+        <select id="selectNumber">
+          <option>Choose a number</option>
+        </select>
+        <input type="text" id="open_q"></input>
+        </div>
         <div id="questionRecommendations"></div>
       </div>
     </div>
