@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-//import { Workbook } from 'exceljs';
+import * as EXCEL from 'exceljs';
+import * as fs from 'file-saver';
 let index = 0;
 let data2; //variable para almacenar el json
 let actualQuestion;
@@ -8,6 +9,7 @@ let actualQuestion;
 function Home() {
   const [name, setName] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+
   var arrayData = [];
   //Reader of excel
   const onChange = (e) => {
@@ -24,10 +26,26 @@ function Home() {
       const ws2 = wb2.Sheets[wsname2];
       console.log(ws2);
       data2 = XLSX.utils.sheet_to_json(ws2, { range: 8, raw: true, defval: "" });
-      //console.log("This data is: " + JSON.stringify(data2));
+      console.log("This data is: " + JSON.stringify(data2));
       const button = document.getElementById("loadButton");
       console.log(data2.length);
       button.removeAttribute("hidden");
+    /*
+    wb.xlsx.writeBuffer().then((data) => {
+      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      fs.saveAs(blob, 'candidate.xlsx');
+    })
+  
+      //const list = wb.getWorksheet(1);
+      //console.log(list);
+      //console.log(result);
+      //console.log(wb);
+      /*
+      const ws = wb.getWorksheet(1);
+      console.log(ws);
+      const prueba = ws.getCell('A1')
+      console.log(prueba.value);
+
       //Solución libreria ExcelJS para coger el data validation
       //const wb0 = new ExcelJS.Workbook();
       //wb0.xlsx.readFile(fileName);
@@ -60,9 +78,9 @@ function Home() {
     displayQuestion();
   }
   function displayQuestion() {
-    var questionCategory= document.getElementById("questionCategory");
-    var questionQuestion= document.getElementById("questionQuestion");
-    var questionRecommendation= document.getElementById("questionRecommendations");
+    var questionCategory = document.getElementById("questionCategory");
+    var questionQuestion = document.getElementById("questionQuestion");
+    var questionRecommendation = document.getElementById("questionRecommendations");
     /*var questionContainer = document.getElementById("questionBox");
     if (data2) {
       actualQuestion = function () {
@@ -74,65 +92,65 @@ function Home() {
       }
       questionContainer.innerHTML=actualQuestion;
     }*/
-    questionCategory.innerHTML=data2[index]["Category"];
-    questionQuestion.innerHTML=data2[index]["Question"];
-    questionRecommendation.innerHTML=data2[index]["Recommendation"];
+    questionCategory.innerHTML = data2[index]["Category"];
+    questionQuestion.innerHTML = data2[index]["Question"];
+    questionRecommendation.innerHTML = data2[index]["Recommendation"];
   }
-  function prevQuestion(){
-    if(index>0){
+  function prevQuestion() {
+    if (index > 0) {
       index--;
       displayQuestion();
       console.log(index);
     }
-    
+
   }
 
-  function nextQuestion(){
-    if(index+1 < (data2.length)){
+  function nextQuestion() {
+    if (index + 1 < (data2.length)) {
       index++;
       displayQuestion();
       console.log(index);
-    }    
+    }
   }
 
-return (
-  <div className="home">
-    <div id="container">
-      <div className="row align-items-center my-5">
-        <div className="col-lg-7">
-          <img
-            className="img-fluid rounded mb-4 mb-lg-0"
-            src="http://placehold.it/900x400"
-            alt=""
-          />
-        </div>
-        <div className="col-lg-5">
-          <h1 className="font-weight-light">Home page</h1>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of
-            type and scrambled it to make a type specimen book.
-          </p>
-          <input
-            type="file"
-            accept=".xls,.xlsx"
-            value={selectedFile}
-            onChange={onChange}
-          />
-          <button onClick={ hideBlock} id="loadButton" hidden>Edit this file</button>
+  return (
+    <div className="home">
+      <div id="container">
+        <div className="row align-items-center my-5">
+          <div className="col-lg-7">
+            <img
+              className="img-fluid rounded mb-4 mb-lg-0"
+              src="http://placehold.it/900x400"
+              alt=""
+            />
+          </div>
+          <div className="col-lg-5">
+            <h1 className="font-weight-light">Home page</h1>
+            <p>
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since the 1500s, when an unknown printer took a galley of
+              type and scrambled it to make a type specimen book.
+            </p>
+            <input
+              type="file"
+              accept=".xls,.xlsx"
+              value={selectedFile}
+              onChange={onChange}
+            />
+            <button onClick={hideBlock} id="loadButton" hidden>Edit this file</button>
+          </div>
         </div>
       </div>
+      <div id="questionsContainer">
+        <button onClick={prevQuestion} id="prevQButton">Previous Question</button>
+        <button onClick={nextQuestion} id="nextQButton">Next Question</button>
+        <div id="questionCategory"></div>
+        <div id="questionQuestion"></div>
+        <div id="questionRecommendations"></div>
+      </div>
     </div>
-    <div id="questionsContainer">
-      <button onClick={prevQuestion} id="prevQButton">Previous Question</button>
-      <button onClick={nextQuestion} id="nextQButton">Next Question</button>
-      <div id="questionCategory"></div>
-      <div id="questionQuestion"></div>
-      <div id="questionRecommendations"></div>
-    </div>
-  </div>
-);
+  );
 
 }
 export default Home;
