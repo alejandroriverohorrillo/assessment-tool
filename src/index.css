@@ -33,15 +33,42 @@ a:hover {
   margin-bottom: 20px
 }
 
+.optionButton{
+  -webkit-transition: all 0.3s ease;   transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+  padding: 15px;
+  color: #fff;
+  font-family: sans-serif;
+  margin-right: 10px;
+  margin-left: 10px;
+  background-color: #000;
+  margin-bottom: 20px
+}
+
+.optionButton.selected{
+  background-color: #56d42d;
+  color: #000
+}
+
 @media (min-width: 650px) {
-  .qButton:hover {
+  .qButton:hover{
+    background-color: #56d42d;
+    color: #000  
+   }
+   .optionButton:hover{
     background-color: #56d42d;
     color: #000  
    }
 }
+
  
 @media (max-width: 650px) {
   .qButton{
+    display: block;
+  }
+
+  .optionButton{
     display: block;
   }
 }

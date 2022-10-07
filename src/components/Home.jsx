@@ -112,11 +112,29 @@ function Home() {
       select.style.display='block';
       for(var i = 0; i < options.length; i++) {
           var opt = options[i];
-          var el = document.createElement("option");
+          var el = document.createElement("button");
+          el.className="optionButton";
           el.textContent = opt;
           el.value = opt;
           select.appendChild(el);
       }
+
+      var optionButton = document.getElementsByClassName("optionButton");
+	
+		var addSelectClass = function(){
+			removeSelectClass();
+			this.classList.add('selected');	
+		}
+
+		var removeSelectClass = function(){
+			for (var i =0; i < optionButton.length; i++) {
+				optionButton[i].classList.remove('selected')
+			}
+		}
+		
+		for (var i =0; i < optionButton.length; i++) {
+			optionButton[i].addEventListener("click",addSelectClass);
+		}
     }
     else{
       select.style.display='none';
@@ -138,6 +156,8 @@ function Home() {
       displayQuestion();
     }
   }
+
+  
 
   return (
     <div className="home">
@@ -174,9 +194,9 @@ function Home() {
         <div id="questionCategory"></div>
         <div id="questionQuestion"></div>
         <div id="Answer">
-        <select id="selectNumber">
-          <option>Choose a number</option>
-        </select>
+        <div id="selectNumber">
+          <div>Choose a number</div>
+        </div>
         <input type="text" id="open_q"></input>
         </div>
         <div id="questionRecommendations"></div>
