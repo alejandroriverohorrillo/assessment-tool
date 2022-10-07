@@ -169,8 +169,8 @@ function Home() {
         </div>
       </div>
       <div id="questionsContainer" hidden>
-        <button onClick={prevQuestion} id="prevQButton">Previous Question</button>
-        <button onClick={nextQuestion} id="nextQButton">Next Question</button>
+        <button onClick={prevQuestion} id="prevQButton" className="qButton">Previous Question</button>
+        <button onClick={nextQuestion} id="nextQButton" className="qButton">Next Question</button>
         <div id="questionCategory"></div>
         <div id="questionQuestion"></div>
         <div id="Answer">
