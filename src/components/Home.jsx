@@ -4,7 +4,6 @@ import * as EXCEL from 'exceljs';
 import * as fs from 'file-saver';
 let index = 0;
 let data2; //variable para almacenar el json
-let check = 0;
 
 
 function Home() {
@@ -84,6 +83,7 @@ function Home() {
     var questionRecommendation = document.getElementById("questionRecommendations");
     var acg = document.getElementById("selectNumber");
     var box = document.getElementById("open_q");
+    var box_button=document.getElementById("open_q_save");
     var select = document.getElementById("selectNumber");
     var hgb = document.getElementById("questionsContainer");
     hgb.removeAttribute("hidden");
@@ -105,10 +105,9 @@ function Home() {
     var answer_options = String(data2[index]["Options"]);
 
     if (answer_options.length > 2) {
-      //Closed questions
-      check = 1;
 
       box.style.display = 'none';
+      box_button.style.display='none';
       acg.innerHTML = "";
       var options = answer_options.split("; ");
       var select = document.getElementById("selectNumber");
@@ -123,6 +122,13 @@ function Home() {
       }
 
       var optionButton = document.getElementsByClassName("optionButton");
+      var text = data2[index]["Answer"];
+      
+      for(var i = 0; i < optionButton.length; i++){
+        if(optionButton[i].innerHTML==text){
+          optionButton[i].classList.add('selected');
+        }
+      }
 
       var addSelectClass = function () {
         removeSelectClass();
@@ -132,7 +138,7 @@ function Home() {
       }
       var removeSelectClass = function () {
         for (var i = 0; i < optionButton.length; i++) {
-          optionButton[i].classList.remove('selected')
+          optionButton[i].classList.remove('selected');
         }
       }
       for (var i = 0; i < optionButton.length; i++) {
@@ -142,33 +148,25 @@ function Home() {
     else {
       select.style.display = 'none';
       box.style.display = 'block';
-      check = 0;
-
+      box_button.style.display='block';
     }
   }
-  downloadExcel = (data2) => {
+  function downloadExcel () {
     const worksheet = XLSX.utils.json_to_sheet(data2);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Result");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     XLSX.writeFile(workbook, "DataSheet.xlsx");
-  };
+  }
   function prevQuestion() {
-    if (check == 0) {
-      saveOpenAnswers();
-    }
     if (index > 0) {
       index--;
       displayQuestion();
     }
-
   }
 
   function nextQuestion() {
-    if (check == 0) {
-      saveOpenAnswers();
-    }
     if (index + 1 < (data2.length)) {
       index++;
       displayQuestion();
@@ -217,7 +215,7 @@ function Home() {
       <div id="questionsContainer" hidden>
         <button onClick={prevQuestion} id="prevQButton" className="qButton">Previous Question</button>
         <button onClick={nextQuestion} id="nextQButton" className="qButton">Next Question</button>
-        <button onClick={()=> this.downloadExcel(data2)} id="saveQButton" className="qButton">Save Assessment</button>
+        <button onClick={downloadExcel} id="saveQButton" className="qButton">Save Assessment</button>
         <div id="questionCategory"></div>
         <div id="questionQuestion"></div>
         <div id="Answer">
@@ -225,6 +223,7 @@ function Home() {
             <div>Choose a number</div>
           </div>
           <input type="text" id="open_q" className="open_text"></input>
+          <button onClick={saveOpenAnswers} id="open_q_save">Save open answer</button>
         </div>
         <div id="questionRecommendations"></div>
 
