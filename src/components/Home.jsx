@@ -4,7 +4,8 @@ import * as EXCEL from 'exceljs';
 import * as fs from 'file-saver';
 let index = 0;
 let data2; //variable para almacenar el json
-let actualQuestion;
+let check = 0;
+
 
 function Home() {
   const [name, setName] = useState("");
@@ -30,42 +31,42 @@ function Home() {
       const button = document.getElementById("loadButton");
       console.log(data2.length);
       button.removeAttribute("hidden");
-    /*
-    wb.xlsx.writeBuffer().then((data) => {
-      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      fs.saveAs(blob, 'candidate.xlsx');
-    })
+      /*
+      wb.xlsx.writeBuffer().then((data) => {
+        let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        fs.saveAs(blob, 'candidate.xlsx');
+      })
+    
+        //const list = wb.getWorksheet(1);
+        //console.log(list);
+        //console.log(result);
+        //console.log(wb);
+        /*
+        const ws = wb.getWorksheet(1);
+        console.log(ws);
+        const prueba = ws.getCell('A1')
+        console.log(prueba.value);
   
-      //const list = wb.getWorksheet(1);
-      //console.log(list);
-      //console.log(result);
-      //console.log(wb);
-      /*
-      const ws = wb.getWorksheet(1);
-      console.log(ws);
-      const prueba = ws.getCell('A1')
-      console.log(prueba.value);
-
-      //Solución libreria ExcelJS para coger el data validation
-      //const wb0 = new ExcelJS.Workbook();
-      //wb0.xlsx.readFile(fileName);
-      //Primera solución sin parser
-      /*
-      const bstr = evt.target.result;
-      const wb = XLSX.read(bstr, { type: "binary" });
-      const wsname = wb.SheetNames[2];
-      const ws = wb.Sheets[wsname];
-      const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      const dataString = data[8].toString();
-      arrayData = dataString.split(",");
-      console.log("This data is: "+arrayData[2]);
-      const button= document.getElementById("loadButton");
-      button.removeAttribute("hidden");
-      document.getElementById("prueba").innerHTML = arrayData[1];
-      document.getElementById("prueba1").innerHTML = arrayData[4];
-      const value21 = ws.Cells(11,2).toString(); 
-      console.log(value21);
-      */
+        //Solución libreria ExcelJS para coger el data validation
+        //const wb0 = new ExcelJS.Workbook();
+        //wb0.xlsx.readFile(fileName);
+        //Primera solución sin parser
+        /*
+        const bstr = evt.target.result;
+        const wb = XLSX.read(bstr, { type: "binary" });
+        const wsname = wb.SheetNames[2];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        const dataString = data[8].toString();
+        arrayData = dataString.split(",");
+        console.log("This data is: "+arrayData[2]);
+        const button= document.getElementById("loadButton");
+        button.removeAttribute("hidden");
+        document.getElementById("prueba").innerHTML = arrayData[1];
+        document.getElementById("prueba1").innerHTML = arrayData[4];
+        const value21 = ws.Cells(11,2).toString(); 
+        console.log(value21);
+        */
     };
 
     reader.readAsBinaryString(file);
@@ -101,48 +102,62 @@ function Home() {
     questionQuestion.innerHTML = data2[index]["Question"];
     questionRecommendation.innerHTML = data2[index]["Recommendation"];
     //questionAnswer.innerHTML=data2[index]["Answers"];
-    var answer_options=String(data2[index]["Options"]);
-    
-    if(answer_options.length>2){
+    var answer_options = String(data2[index]["Options"]);
 
-      box.style.display='none';
-      acg.innerHTML="";
-      var options=answer_options.split("; ");
+    if (answer_options.length > 2) {
+      //Closed questions
+      check = 1;
+
+      box.style.display = 'none';
+      acg.innerHTML = "";
+      var options = answer_options.split("; ");
       var select = document.getElementById("selectNumber");
-      select.style.display='block';
-      for(var i = 0; i < options.length; i++) {
-          var opt = options[i];
-          var el = document.createElement("button");
-          el.className="optionButton";
-          el.textContent = opt;
-          el.value = opt;
-          select.appendChild(el);
+      select.style.display = 'block';
+      for (var i = 0; i < options.length; i++) {
+        var opt = options[i];
+        var el = document.createElement("button");
+        el.className = "optionButton";
+        el.textContent = opt;
+        el.value = opt;
+        select.appendChild(el);
       }
 
       var optionButton = document.getElementsByClassName("optionButton");
-	
-		var addSelectClass = function(){
-			removeSelectClass();
-			this.classList.add('selected');	
-		}
 
-		var removeSelectClass = function(){
-			for (var i =0; i < optionButton.length; i++) {
-				optionButton[i].classList.remove('selected')
-			}
-		}
-		
-		for (var i =0; i < optionButton.length; i++) {
-			optionButton[i].addEventListener("click",addSelectClass);
-		}
+      var addSelectClass = function () {
+        removeSelectClass();
+        this.classList.add('selected');
+        data2[index]["Answer"] = this.value;
+        console.log(data2[index]["Answer"]);
+      }
+      var removeSelectClass = function () {
+        for (var i = 0; i < optionButton.length; i++) {
+          optionButton[i].classList.remove('selected')
+        }
+      }
+      for (var i = 0; i < optionButton.length; i++) {
+        optionButton[i].addEventListener("click", addSelectClass);
+      }
     }
-    else{
-      select.style.display='none';
-      box.style.display='block';
-      
+    else {
+      select.style.display = 'none';
+      box.style.display = 'block';
+      check = 0;
+
     }
   }
+  downloadExcel = (data2) => {
+    const worksheet = XLSX.utils.json_to_sheet(data2);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Result");
+    //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+    //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+    XLSX.writeFile(workbook, "DataSheet.xlsx");
+  };
   function prevQuestion() {
+    if (check == 0) {
+      saveOpenAnswers();
+    }
     if (index > 0) {
       index--;
       displayQuestion();
@@ -151,13 +166,24 @@ function Home() {
   }
 
   function nextQuestion() {
+    if (check == 0) {
+      saveOpenAnswers();
+    }
     if (index + 1 < (data2.length)) {
       index++;
       displayQuestion();
     }
   }
+  function saveOpenAnswers() {
+    var openResult = document.getElementById("open_q");
+    data2[index]["Answer"] = openResult.value;
+    console.log(data2[index]["Answer"]);
+  }
+  function generateReport() {
 
-  
+  }
+
+
 
   return (
     <div className="home">
@@ -191,16 +217,19 @@ function Home() {
       <div id="questionsContainer" hidden>
         <button onClick={prevQuestion} id="prevQButton" className="qButton">Previous Question</button>
         <button onClick={nextQuestion} id="nextQButton" className="qButton">Next Question</button>
+        <button onClick={()=> this.downloadExcel(data2)} id="saveQButton" className="qButton">Save Assessment</button>
         <div id="questionCategory"></div>
         <div id="questionQuestion"></div>
         <div id="Answer">
-        <div id="selectNumber">
-          <div>Choose a number</div>
-        </div>
-        <input type="text" id="open_q"></input>
+          <div id="selectNumber">
+            <div>Choose a number</div>
+          </div>
+          <input type="text" id="open_q" className="open_text"></input>
         </div>
         <div id="questionRecommendations"></div>
+
       </div>
+      <button onClick={generateReport} id="reportButton" className="qButton" hidden>Generate Report</button>
     </div>
   );
 
