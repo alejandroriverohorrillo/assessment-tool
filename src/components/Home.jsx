@@ -3,7 +3,8 @@ import * as XLSX from "xlsx";
 import * as EXCEL from 'exceljs';
 import * as fs from 'file-saver';
 let index = 0;
-let data2; //variable para almacenar el json
+let data2;
+let wb2; //variable para almacenar el json
 
 
 function Home() {
@@ -21,7 +22,7 @@ function Home() {
     reader.onload = (evt) => {
       //Solución Parser
       const bstr1 = evt.target.result;
-      const wb2 = XLSX.read(bstr1, { type: 'binary' });
+      wb2 = XLSX.read(bstr1, { type: 'binary' });
       const wsname2 = wb2.SheetNames[2];
       const ws2 = wb2.Sheets[wsname2];
       console.log(ws2);
@@ -148,17 +149,41 @@ function Home() {
     else {
       select.style.display = 'none';
       box.style.display = 'block';
+      box.value=data2[index]["Answer"];
       box_button.style.display='block';
     }
   }
   function downloadExcel () {
-    const worksheet = XLSX.utils.json_to_sheet(data2);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Result");
+    //const worksheet = XLSX.utils.json_to_sheet(data2);
+    const workbook = wb2;
+    const wsname2 = workbook.SheetNames[2];
+    const ws2 = wb2.Sheets[wsname2];
+    
+    //Write answers into
+    var number_cell=10;
+    for (var i = 0; i < data2.length; i++) {
+      var actual_cell= 'C'+ String(number_cell+i);
+      console.log(i+ "+ronda");
+      if(ws2[actual_cell]===undefined){
+        XLSX.utils.sheet_add_aoa(ws2, [['']], {origin: actual_cell});
+      }
+      let cell = ws2[actual_cell].v;
+      console.log("el valor de cell: "+cell);
+      console.log("Celda actual: "+actual_cell);
+        ws2[actual_cell].v= data2[i]["Answer"];
+        console.log(ws2[actual_cell].v);
+    }
+    
+    
+    //ws2.workbook.write
+    //XLSX.utils.
+    //XLSX.utils.book_append_sheet(workbook, worksheet, "Result");
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-    //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+    XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     XLSX.writeFile(workbook, "DataSheet.xlsx");
   }
+
+  
   function prevQuestion() {
     if (index > 0) {
       index--;
@@ -175,13 +200,12 @@ function Home() {
   function saveOpenAnswers() {
     var openResult = document.getElementById("open_q");
     data2[index]["Answer"] = openResult.value;
+    alert("Answer Saved");
     console.log(data2[index]["Answer"]);
   }
   function generateReport() {
 
   }
-
-
 
   return (
     <div className="home">
