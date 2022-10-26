@@ -68,9 +68,7 @@ function Home() {
         console.log(value21);
         */
     };
-
     reader.readAsBinaryString(file);
-
   };
 
   function hideBlock() {
@@ -84,7 +82,9 @@ function Home() {
     var questionRecommendation = document.getElementById("questionRecommendations");
     var acg = document.getElementById("selectNumber");
     var box = document.getElementById("open_q");
-    var box_button=document.getElementById("open_q_save");
+    var box_button = document.getElementById("open_q_save");
+    var comment = document.getElementById("comment");
+    var comment_bottom = document.getElementById("comment_save");
     var select = document.getElementById("selectNumber");
     var hgb = document.getElementById("questionsContainer");
     hgb.removeAttribute("hidden");
@@ -102,13 +102,10 @@ function Home() {
     questionCategory.innerHTML = data2[index]["Category"];
     questionQuestion.innerHTML = data2[index]["Question"];
     questionRecommendation.innerHTML = data2[index]["Recommendation"];
-    //questionAnswer.innerHTML=data2[index]["Answers"];
     var answer_options = String(data2[index]["Options"]);
-
     if (answer_options.length > 2) {
-
       box.style.display = 'none';
-      box_button.style.display='none';
+      box_button.style.display = 'none';
       acg.innerHTML = "";
       var options = answer_options.split("; ");
       var select = document.getElementById("selectNumber");
@@ -124,9 +121,9 @@ function Home() {
 
       var optionButton = document.getElementsByClassName("optionButton");
       var text = data2[index]["Answer"];
-      
-      for(var i = 0; i < optionButton.length; i++){
-        if(optionButton[i].innerHTML==text){
+
+      for (var i = 0; i < optionButton.length; i++) {
+        if (optionButton[i].innerHTML == text) {
           optionButton[i].classList.add('selected');
         }
       }
@@ -149,41 +146,50 @@ function Home() {
     else {
       select.style.display = 'none';
       box.style.display = 'block';
-      box.value=data2[index]["Answer"];
-      box_button.style.display='block';
+      box.value = data2[index]["Answer"];
+      box_button.style.display = 'block';
     }
+    comment.style.display = 'block';
+    comment.value = data2[index]["Comment"];
+    comment_bottom.style.display = 'block';
   }
-  function downloadExcel () {
-    //const worksheet = XLSX.utils.json_to_sheet(data2);
+  function downloadExcel() {
     const workbook = wb2;
     const wsname2 = workbook.SheetNames[2];
     const ws2 = wb2.Sheets[wsname2];
-    
     //Write answers into
-    var number_cell=10;
+    var number_cell = 10;
     for (var i = 0; i < data2.length; i++) {
-      var actual_cell= 'C'+ String(number_cell+i);
-      console.log(i+ "+ronda");
-      if(ws2[actual_cell]===undefined){
-        XLSX.utils.sheet_add_aoa(ws2, [['']], {origin: actual_cell});
+      var answer_cell = 'C' + String(number_cell + i);
+      var comment_cell = 'D' + String(number_cell + i);
+      //console.log(i + "+ronda");
+      if (ws2[answer_cell] === undefined) {
+        XLSX.utils.sheet_add_aoa(ws2, [['']], { origin: answer_cell });
       }
-      let cell = ws2[actual_cell].v;
-      console.log("el valor de cell: "+cell);
-      console.log("Celda actual: "+actual_cell);
-        ws2[actual_cell].v= data2[i]["Answer"];
-        console.log(ws2[actual_cell].v);
+      if (ws2[comment_cell] === undefined) {
+        XLSX.utils.sheet_add_aoa(ws2, [['']], { origin: comment_cell });
+      }
+      let cell = ws2[answer_cell].v;
+      /*
+      console.log("el valor de cell: " + cell);
+      console.log("Celda actual: " + answer_cell);
+      */
+      ws2[answer_cell].v = data2[i]["Answer"];
+      ws2[comment_cell].v = data2[i]["Comment"];
+      console.log(ws2[answer_cell].v);
+      console.log(ws2[comment_cell].v)
     }
-    
-    
-    //ws2.workbook.write
-    //XLSX.utils.
-    //XLSX.utils.book_append_sheet(workbook, worksheet, "Result");
-    //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+    /*
+    ws2.workbook.write
+    XLSX.utils.
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Result");
+    let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+    */
     XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     XLSX.writeFile(workbook, "DataSheet.xlsx");
   }
 
-  
+
   function prevQuestion() {
     if (index > 0) {
       index--;
@@ -203,10 +209,15 @@ function Home() {
     alert("Answer Saved");
     console.log(data2[index]["Answer"]);
   }
+  function saveComment() {
+    var openResult = document.getElementById("comment");
+    data2[index]["Comment"] = openResult.value;
+    alert("Comment Saved");
+    console.log(data2[index]["Comment"]);
+  }
   function generateReport() {
 
   }
-
   return (
     <div className="home">
       <div id="container">
@@ -248,9 +259,11 @@ function Home() {
           </div>
           <input type="text" id="open_q" className="open_text"></input>
           <button onClick={saveOpenAnswers} id="open_q_save">Save open answer</button>
+          <div>Comment</div>
+          <input type="text" id="comment" ></input>
+          <button onClick={saveComment} id="comment_save">Save Comment</button>
         </div>
         <div id="questionRecommendations"></div>
-
       </div>
       <button onClick={generateReport} id="reportButton" className="qButton" hidden>Generate Report</button>
     </div>
