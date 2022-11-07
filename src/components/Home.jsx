@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-import * as EXCEL from 'exceljs';
-import * as fs from 'file-saver';
+
 let index = 0;
 let data2;
 let wb2; //variable para almacenar el json
 
-
 function Home() {
-  const [name, setName] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
+  
+  const [selectedFile] = useState(null);
 
-  var arrayData = [];
   //Reader of excel
   const onChange = (e) => {
     const file = e.target.files[0];
@@ -31,42 +28,6 @@ function Home() {
       const button = document.getElementById("loadButton");
       console.log(data2.length);
       button.removeAttribute("hidden");
-      /*
-      wb.xlsx.writeBuffer().then((data) => {
-        let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        fs.saveAs(blob, 'candidate.xlsx');
-      })
-    
-        //const list = wb.getWorksheet(1);
-        //console.log(list);
-        //console.log(result);
-        //console.log(wb);
-        /*
-        const ws = wb.getWorksheet(1);
-        console.log(ws);
-        const prueba = ws.getCell('A1')
-        console.log(prueba.value);
-  
-        //Solución libreria ExcelJS para coger el data validation
-        //const wb0 = new ExcelJS.Workbook();
-        //wb0.xlsx.readFile(fileName);
-        //Primera solución sin parser
-        /*
-        const bstr = evt.target.result;
-        const wb = XLSX.read(bstr, { type: "binary" });
-        const wsname = wb.SheetNames[2];
-        const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-        const dataString = data[8].toString();
-        arrayData = dataString.split(",");
-        console.log("This data is: "+arrayData[2]);
-        const button= document.getElementById("loadButton");
-        button.removeAttribute("hidden");
-        document.getElementById("prueba").innerHTML = arrayData[1];
-        document.getElementById("prueba1").innerHTML = arrayData[4];
-        const value21 = ws.Cells(11,2).toString(); 
-        console.log(value21);
-        */
     };
     reader.readAsBinaryString(file);
   };
@@ -118,16 +79,14 @@ function Home() {
         el.value = opt;
         select.appendChild(el);
       }
-
       var optionButton = document.getElementsByClassName("optionButton");
       var text = data2[index]["Answer"];
 
       for (var i = 0; i < optionButton.length; i++) {
-        if (optionButton[i].innerHTML == text) {
+        if (optionButton[i].innerHTML === text) {
           optionButton[i].classList.add('selected');
         }
       }
-
       var addSelectClass = function () {
         removeSelectClass();
         this.classList.add('selected');
@@ -162,6 +121,7 @@ function Home() {
     for (var i = 0; i < data2.length; i++) {
       var answer_cell = 'C' + String(number_cell + i);
       var comment_cell = 'D' + String(number_cell + i);
+      var score_cell = 'G' + String(number_cell + i);
       //console.log(i + "+ronda");
       if (ws2[answer_cell] === undefined) {
         XLSX.utils.sheet_add_aoa(ws2, [['']], { origin: answer_cell });
@@ -169,7 +129,6 @@ function Home() {
       if (ws2[comment_cell] === undefined) {
         XLSX.utils.sheet_add_aoa(ws2, [['']], { origin: comment_cell });
       }
-      let cell = ws2[answer_cell].v;
       /*
       console.log("el valor de cell: " + cell);
       console.log("Celda actual: " + answer_cell);
@@ -177,7 +136,8 @@ function Home() {
       ws2[answer_cell].v = data2[i]["Answer"];
       ws2[comment_cell].v = data2[i]["Comment"];
       console.log(ws2[answer_cell].v);
-      console.log(ws2[comment_cell].v)
+      console.log(ws2[comment_cell].v);
+      console.log(ws2[score_cell].v)
     }
     /*
     ws2.workbook.write
@@ -188,7 +148,6 @@ function Home() {
     XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
     XLSX.writeFile(workbook, "DataSheet.xlsx");
   }
-
 
   function prevQuestion() {
     if (index > 0) {
@@ -215,8 +174,8 @@ function Home() {
     alert("Comment Saved");
     console.log(data2[index]["Comment"]);
   }
-  function generateReport() {
-
+  const generateReport =()=> {
+  
   }
   return (
     <div className="home">
@@ -265,7 +224,7 @@ function Home() {
         </div>
         <div id="questionRecommendations"></div>
       </div>
-      <button onClick={generateReport} id="reportButton" className="qButton" hidden>Generate Report</button>
+      <button onClick={generateReport} id="reportButton" className="qButton">Generate Report</button>
     </div>
   );
 

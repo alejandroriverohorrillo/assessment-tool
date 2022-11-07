@@ -1,8 +1,11 @@
 
+from tkinter import *
+from tkinter import filedialog
 import openpyxl as xl
 from openpyxl.chart import LineChart, Reference
 import os
 import sys
+import PySimpleGUI as sg
 from docx.shared import Cm
 from docx.shared import Cm, Inches, Mm, Emu
 from docxtpl import DocxTemplate, InlineImage
@@ -11,14 +14,11 @@ import random
 import datetime
 import plotly.graph_objects as go
 
+
 workbook = xl.load_workbook('2_OCP_Assessment_Questionnaire_OCP_Installed_v2.xlsx', data_only=True)
 sheet_1 = workbook['OCP Cluster - Scoring']
 
-#worksheet = wb.get_sheet_by_name(first_sheet)
-#first_sheet = wb.get_sheet_names()[0]
 
-#Extract info from columns
-#for row in range(10, sheet_1.max_row + 1):
 categoryGroup= sheet_1.cell(8,2).value
 print(categoryGroup)
 categories=categoryGroup.split(", ")
